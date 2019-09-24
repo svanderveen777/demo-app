@@ -10,7 +10,7 @@ public class AnotherService {
     String key;
 
     public void process(String name) {
-        if(name.equalsIgnoreCase(key)) {
+        if(name != null && name.equalsIgnoreCase(key)) {
             new StaticThingy().populateList();
         } else {
             new StaticThingy().clearList();
