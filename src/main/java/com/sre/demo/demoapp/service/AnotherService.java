@@ -8,12 +8,17 @@ public class AnotherService {
 
     @Value("${demo.monkey.key:steve}")
     String key;
+    static final StaticThingy staticThingy;
+
+    static {
+       staticThingy = new StaticThingy();
+    }
 
     public void process(String name) {
         if(name != null && name.equalsIgnoreCase(key)) {
-            new StaticThingy().populateList();
+            staticThingy.populateList(false);
         } else {
-            new StaticThingy().clearList();
+           staticThingy.populateList(true);;
         }
     }
 }
