@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: BuildConfig
+metadata:
+  name: demo-app-s2i
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: demo-app:0.0.1
+  runPolicy: Serial
+  source:
+    type: Binary
+  strategy:
+    dockerStrategy:
