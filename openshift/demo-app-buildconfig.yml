@@ -12,3 +12,4 @@ spec:
     type: Binary
   strategy:
     dockerStrategy:
+      forcePull: true
