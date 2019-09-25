@@ -1,1 +1,23 @@
-# ADD deploy config here
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+    fabric8.io/git-commit: 5a9a3cdfd3b21ea694a863a86670329cc92449d9
+    fabric8.io/git-branch: openshift
+    fabric8.io/git-url: git@github.com:slowtrailrunner/demo-app.git
+    fabric8.io/scm-url: https://github.com/spring-projects/spring-boot/spring-boot-starter-parent/demo-app
+    fabric8.io/scm-tag: HEAD
+  labels:
+    expose: "true"
+    app: demo-app
+    provider: fabric8
+    version: 0.0.1-SNAPSHOT
+    group: com.sre.demo
+  name: demo-app
+spec:
+  port:
+    targetPort: 8080
+  to:
+    kind: Service
+    name: demo-app

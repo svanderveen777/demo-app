@@ -1,32 +1,31 @@
 #!/usr/bin/groovy
 
-try {
-    timeout(time: 20, unit: 'MINUTES') {
-        def appName="demo-app"
-        def project = //Enter project name here
-        node("maven") {
-            stage("Checkout") {
-                //checkout project
-            }
-            stage("Build Release") {
-                //build with maven and run tests
-            }
-        }
-        node {
-              stage("Build Image") {
-                   //Build image using s2i
-                   //Use the following to build with s2i
+          try {
+             timeout(time: 20, unit: 'MINUTES') {
+                def appName="demo-app"
+                def project = "springboot-test"
 
+                node("maven") {
+                  stage("Checkout") {
+                   //checkout ([$class: 'GitSCM', branches: [[name: "refs/heads/openshift"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'LocalBranch', localBranch: openshift]], submoduleCfg: [], userRemoteConfigs: scm.userRemoteConfigs])
+                    checkout scm
+                  }
+                  stage("Build Release") {
+                    sh "mvn clean -B -e -U install -P openshift"
+                  }
+                }
+                node {
+                  stage("Build Image") {
+                    checkout scm
                     sh "oc apply -f openshift/demo-app-imagestream.yml -n ${project}"
                     sh "oc apply -f openshift/demo-app-buildconfig.yml -n ${project}"
-
-                    //add code to build via s2i here
-
+                    sh "oc start-build ${appName}-s2i --from-dir=. --follow -n ${project}"
                     openshiftVerifyBuild bldCfg: "${appName}-s2i", namespace: project, waitTime: '20', waitUnit: 'min'
                   }
                   stage("Deploy") {
-                    //Apply your service/route/deploymentconfig here
-                  
+                    sh "oc apply -f openshift/demo-app-service.yml -n ${project}"
+                    sh "oc apply -f openshift/demo-app-route.yml -n ${project}"
+                    sh "oc apply -f openshift/demo-app-deploymentconfig.yml -n ${project}"
                     openshiftDeploy deploymentConfig: appName, namespace: project
                   }
                 }
