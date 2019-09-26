@@ -11,5 +11,7 @@ spec:
   source:
     type: Binary
   strategy:
-    dockerStrategy:
-      forcePull: true
+    sourceStrategy:
+      from:
+        kind: DockerImage
+        name: 'fabric8/s2i-java:2.3'
